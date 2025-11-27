@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: us-two-app
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

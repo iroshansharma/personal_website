@@ -1,0 +1,136 @@
+
+> personal_website@0.1.0 build
+> next build
+
+ ⚠ You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+   ▲ Next.js 16.0.5 (Turbopack)
+
+   Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+./app/api/photos/route.js:7:14
+Next.js can't recognize the exported `config` field in route. Page config in `config` is deprecated and ignored, use individual exports instead.
+[0m [90m  5 |[39m [36mimport[39m db [36mfrom[39m [32m'@/lib/db'[39m[33m;[39m
+ [90m  6 |[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mexport[39m [36mconst[39m config [33m=[39m {
+ [90m    |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m     api[33m:[39m {
+ [90m  9 |[39m         bodyParser[33m:[39m [36mfalse[39m[33m,[39m
+ [90m 10 |[39m     }[33m,[39m[0m
+
+The exported configuration object in a source file needs to have a very specific format from which some properties can be statically parsed at compiled-time.
+
+https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
+
+
+ ✓ Compiled successfully in 4.3s
+   Running TypeScript ...
+   Collecting page data using 3 workers ...
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT DEFAULT 'text',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT DEFAULT 'text',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS mood (
+    user TEXT PRIMARY KEY,
+    status TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS photos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT NOT NULL,
+    caption TEXT,
+    is_favorite INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS dates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS mood (
+    user TEXT PRIMARY KEY,
+    status TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS photos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT NOT NULL,
+    caption TEXT,
+    is_favorite INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS dates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT DEFAULT 'text',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS mood (
+    user TEXT PRIMARY KEY,
+    status TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS photos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT NOT NULL,
+    caption TEXT,
+    is_favorite INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS dates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+   Generating static pages using 3 workers (0/13) ...
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT DEFAULT 'text',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS mood (
+    user TEXT PRIMARY KEY,
+    status TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS photos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT NOT NULL,
+    caption TEXT,
+    is_favorite INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+CREATE TABLE IF NOT EXISTS dates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+   Generating static pages using 3 workers (3/13) 
+Error occurred prerendering page "/chat". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: Cannot read properties of null (reading 'name')
+    at k (E:\Downloads\personal_website\.next\server\chunks\ssr\[root-of-the-server]__27c13eb4._.js:1:2650) {
+  digest: '3030671945'
+}
+Export encountered an error on /chat/page: /chat, exiting the build.
+ ⨯ Next.js build worker exited with code: 1 and signal: null
