@@ -18,16 +18,16 @@ const servers = {
 };
 
 function CallContent() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const searchParams = useSearchParams();
     const router = useRouter();
     const type = searchParams.get('type') || 'video';
 
     useEffect(() => {
-        if (!user) {
+        if (!loading && !user) {
             router.push('/');
         }
-    }, [user, router]);
+    }, [user, loading, router]);
 
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
@@ -211,6 +211,7 @@ function CallContent() {
         router.push('/dashboard');
     };
 
+    if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
     if (!user) return null;
 
     return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/components/AuthProvider';
+import { useRouter } from 'next/navigation';
 import { Send, Image as ImageIcon, ArrowLeft } from 'lucide-react';
 import io from 'socket.io-client';
 import Link from 'next/link';
@@ -9,7 +10,8 @@ import Link from 'next/link';
 let socket;
 
 export default function Chat() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+    const router = useRouter(); // Need to import useRouter
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -17,6 +19,10 @@ export default function Chat() {
     const typingTimeoutRef = useRef(null);
 
     useEffect(() => {
+        if (!loading && !user) {
+            router.push('/');
+            return;
+        }
         if (!user) return;
 
         // Initialize socket
@@ -74,6 +80,7 @@ export default function Chat() {
         }, 1000);
     };
 
+    if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
     if (!user) return null;
 
     return (

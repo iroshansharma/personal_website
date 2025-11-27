@@ -2,18 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
+import { useRouter } from 'next/navigation';
 import { Upload, Heart, X, Maximize2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Gallery() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+    const router = useRouter(); // Need to import useRouter
     const [photos, setPhotos] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(null);
 
     useEffect(() => {
-        fetchPhotos();
-    }, []);
+        if (!loading && !user) {
+            router.push('/');
+            return;
+        }
+        if (user) {
+            fetchPhotos();
+        }
+    }, [user, loading, router]);
 
     const fetchPhotos = async () => {
         const res = await fetch('/api/photos');
@@ -50,6 +58,7 @@ export default function Gallery() {
         fetchPhotos();
     };
 
+    if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
     if (!user) return null;
 
     return (

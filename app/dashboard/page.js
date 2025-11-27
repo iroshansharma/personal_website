@@ -8,19 +8,19 @@ import { Image, MessageCircle, Phone, Video, Film, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Dashboard() {
-    const { user, logout } = useAuth();
+    const { user, logout, loading } = useAuth();
     const router = useRouter();
     const [dates, setDates] = useState([]);
     const [showDateForm, setShowDateForm] = useState(false);
     const [newDate, setNewDate] = useState({ title: '', date: '' });
 
     useEffect(() => {
-        if (!user) {
+        if (!loading && !user) {
             router.push('/');
-        } else {
+        } else if (user) {
             fetch('/api/dates').then(res => res.json()).then(setDates);
         }
-    }, [user, router]);
+    }, [user, loading, router]);
 
     const addDate = async (e) => {
         e.preventDefault();
@@ -42,6 +42,7 @@ export default function Dashboard() {
         setDates(dates.filter(d => d.id !== id));
     };
 
+    if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
     if (!user) return null;
 
     const shortcuts = [

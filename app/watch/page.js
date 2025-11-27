@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/components/AuthProvider';
+import { useRouter } from 'next/navigation';
 import io from 'socket.io-client';
 import { Play, Pause, Film, Link as LinkIcon, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -9,7 +10,8 @@ import Link from 'next/link';
 let socket;
 
 export default function Watch() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+    const router = useRouter(); // Need to import useRouter
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [videoSrc, setVideoSrc] = useState('');
@@ -17,6 +19,10 @@ export default function Watch() {
     const [syncing, setSyncing] = useState(false);
 
     useEffect(() => {
+        if (!loading && !user) {
+            router.push('/');
+            return;
+        }
         if (!user) return;
 
         socket = io();
@@ -71,6 +77,7 @@ export default function Watch() {
         socket.emit('video-sync', { type: 'source', src: inputSrc, sender: user.name });
     };
 
+    if (loading) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
     if (!user) return null;
 
     return (
