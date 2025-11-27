@@ -94,6 +94,8 @@ function CallContent() {
         }
     };
 
+    const iceCandidatesQueue = useRef([]);
+
     useEffect(() => {
         if (!user) return;
 
@@ -109,6 +111,13 @@ function CallContent() {
             playRing();
             createPeerConnection();
             await peerConnection.setRemoteDescription(offer.sdp);
+
+            // Process queued candidates
+            while (iceCandidatesQueue.current.length > 0) {
+                const candidate = iceCandidatesQueue.current.shift();
+                await peerConnection.addIceCandidate(candidate);
+            }
+
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
             socket.emit('call-answer', { sdp: answer, sender: user.name });
@@ -121,13 +130,23 @@ function CallContent() {
             stopRing();
             if (!peerConnection.currentRemoteDescription) {
                 await peerConnection.setRemoteDescription(answer.sdp);
+
+                // Process queued candidates
+                while (iceCandidatesQueue.current.length > 0) {
+                    const candidate = iceCandidatesQueue.current.shift();
+                    await peerConnection.addIceCandidate(candidate);
+                }
             }
         });
 
         socket.on('ice-candidate', async (candidate) => {
             if (candidate.sender === user.name) return;
             if (peerConnection) {
-                await peerConnection.addIceCandidate(candidate.candidate);
+                if (peerConnection.remoteDescription) {
+                    await peerConnection.addIceCandidate(candidate.candidate);
+                } else {
+                    iceCandidatesQueue.current.push(candidate.candidate);
+                }
             }
         });
 
