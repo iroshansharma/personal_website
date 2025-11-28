@@ -40,6 +40,7 @@ function CallContent() {
     const audioContextRef = useRef(null);
     const oscillatorRef = useRef(null);
     const localStreamRef = useRef(null);
+    const localIceCandidates = useRef([]);
 
     const playRing = () => {
         if (typeof window === 'undefined') return;
@@ -162,6 +163,12 @@ function CallContent() {
             if (peerConnection && peerConnection.localDescription && !peerConnection.remoteDescription) {
                 console.log('Re-sending offer to new user');
                 socket.emit('call-offer', { sdp: peerConnection.localDescription, sender: user.name });
+
+                // Replay ICE candidates
+                localIceCandidates.current.forEach(candidate => {
+                    console.log('Re-sending ICE candidate');
+                    socket.emit('ice-candidate', { candidate, sender: user.name });
+                });
             }
         });
 
@@ -215,6 +222,7 @@ function CallContent() {
 
         peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
+                localIceCandidates.current.push(event.candidate);
                 socket.emit('ice-candidate', { candidate: event.candidate, sender: user.name });
             }
         };
