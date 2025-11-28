@@ -34,6 +34,7 @@ app.prepare().then(() => {
 
         // Join a room based on user ID or just a global room for now since it's 2 users
         socket.join('couple-room');
+        socket.to('couple-room').emit('user-connected', { userId: socket.id });
 
         socket.on('message', (data) => {
             // Save to DB

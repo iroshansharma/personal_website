@@ -151,6 +151,20 @@ function CallContent() {
             }
         });
 
+        socket.on('user-connected', async () => {
+            console.log('User connected, checking if should send offer...');
+            // If we are in "Calling..." state, it means we are waiting for someone to pick up.
+            // If they just connected (e.g. redirected from notification), we should re-send the offer.
+            // However, we need to be careful not to create multiple connections if not needed.
+            // But since the other user just loaded the page, they have no offer. So we MUST send it.
+
+            // We can check if we have a local description set (meaning we created an offer) but no remote description (no answer yet).
+            if (peerConnection && peerConnection.localDescription && !peerConnection.remoteDescription) {
+                console.log('Re-sending offer to new user');
+                socket.emit('call-offer', { sdp: peerConnection.localDescription, sender: user.name });
+            }
+        });
+
         return () => {
             if (localStreamRef.current) {
                 localStreamRef.current.getTracks().forEach(track => track.stop());

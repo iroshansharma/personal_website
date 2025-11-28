@@ -12,6 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 import { AuthProvider } from "@/components/AuthProvider";
+import CallNotification from "@/components/CallNotification";
 
 export const metadata = {
   title: "Us Two",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
+          <CallNotification />
           {children}
         </AuthProvider>
       </body>
