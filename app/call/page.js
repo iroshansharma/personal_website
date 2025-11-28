@@ -39,6 +39,7 @@ function CallContent() {
     const remoteVideoRef = useRef(null);
     const audioContextRef = useRef(null);
     const oscillatorRef = useRef(null);
+    const localStreamRef = useRef(null);
 
     const playRing = () => {
         if (typeof window === 'undefined') return;
@@ -151,8 +152,8 @@ function CallContent() {
         });
 
         return () => {
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
+            if (localStreamRef.current) {
+                localStreamRef.current.getTracks().forEach(track => track.stop());
             }
             if (peerConnection) {
                 peerConnection.close();
@@ -170,6 +171,7 @@ function CallContent() {
                 audio: true
             });
             setLocalStream(stream);
+            localStreamRef.current = stream;
             if (localVideoRef.current) {
                 localVideoRef.current.srcObject = stream;
             }
@@ -184,9 +186,9 @@ function CallContent() {
         if (typeof window === 'undefined' || !window.RTCPeerConnection) return;
         peerConnection = new RTCPeerConnection(servers);
 
-        if (localStream) {
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
+        if (localStreamRef.current) {
+            localStreamRef.current.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStreamRef.current);
             });
         }
 
