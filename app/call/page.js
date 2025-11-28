@@ -97,6 +97,41 @@ function CallContent() {
     };
 
     const iceCandidatesQueue = useRef([]);
+    const pendingOffer = useRef(null);
+
+    const handleIncomingOffer = async (offer) => {
+        if (!localStreamRef.current) {
+            console.log('Local stream not ready, queuing offer');
+            pendingOffer.current = offer;
+            return;
+        }
+
+        console.log('Processing offer');
+        setStatus('Incoming call...');
+        playRing();
+        createPeerConnection();
+        await peerConnection.setRemoteDescription(offer.sdp);
+
+        // Process queued candidates
+        while (iceCandidatesQueue.current.length > 0) {
+            const candidate = iceCandidatesQueue.current.shift();
+            await peerConnection.addIceCandidate(candidate);
+        }
+
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socket.emit('call-answer', { sdp: answer, sender: user.name });
+    };
+
+    // Watch for local stream to be ready to process pending offer
+    useEffect(() => {
+        if (localStream && pendingOffer.current) {
+            console.log('Local stream ready, processing pending offer');
+            const offer = pendingOffer.current;
+            pendingOffer.current = null;
+            handleIncomingOffer(offer);
+        }
+    }, [localStream]);
 
     useEffect(() => {
         if (!user) return;
@@ -109,20 +144,7 @@ function CallContent() {
         socket.on('call-offer', async (offer) => {
             if (offer.sender === user.name) return;
             console.log('Received offer');
-            setStatus('Incoming call...');
-            playRing();
-            createPeerConnection();
-            await peerConnection.setRemoteDescription(offer.sdp);
-
-            // Process queued candidates
-            while (iceCandidatesQueue.current.length > 0) {
-                const candidate = iceCandidatesQueue.current.shift();
-                await peerConnection.addIceCandidate(candidate);
-            }
-
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            socket.emit('call-answer', { sdp: answer, sender: user.name });
+            handleIncomingOffer(offer);
         });
 
         socket.on('call-answer', async (answer) => {
